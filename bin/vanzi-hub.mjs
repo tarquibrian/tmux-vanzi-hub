@@ -15,6 +15,7 @@ import {
   providerIconFor,
   formatChatPreview,
   formatRelativeAge,
+  highlightCode,
   c,
   parseArgs,
   mkdirp,
@@ -1164,5 +1165,6 @@ export {
   pickerNextIndex,
   formatRelativeAge,
   formatChatPreview,
+  highlightCode,
 };
 

@@ -37,6 +37,39 @@ git clone https://github.com/tarquibrian/tmux-vanzi-hub ~/.config/tmux/plugins/t
 run '~/.config/tmux/plugins/tmux-vanzi-hub/vanzi-hub.tmux'
 ```
 
+## Authentication
+
+The hub speaks [ACP](https://agentclientprotocol.com) to adapter processes;
+authentication belongs to the agent CLI behind each adapter, so **you do not
+need a paid plan** — an API key works too:
+
+- **Codex** (`codex-acp`): a ChatGPT plan login (`codex login`) *or*
+  `OPENAI_API_KEY`.
+- **Claude Code** (`claude-agent-acp`): a Claude subscription
+  (`claude /login`) *or* `ANTHROPIC_API_KEY`.
+
+Adapters inherit the daemon's environment, so an exported key just works. To
+scope a key to one agent, add an `env` block in
+`~/.config/tmux-vanzi-hub/agents.json`:
+
+```json
+{
+  "agents": {
+    "codex": {
+      "command": "npx",
+      "args": ["-y", "@zed-industries/codex-acp@0.16.0"],
+      "env": { "OPENAI_API_KEY": "sk-..." }
+    }
+  }
+}
+```
+
+If an adapter starts unauthenticated, the chat drops into an auth state
+(yellow composer border): `/auth` lists the login methods the adapter
+advertises and `/auth <id|n>` runs one (browser OAuth flows open externally).
+Credentials are stored by the agent CLIs themselves (`~/.codex`,
+`~/.claude`), never by the hub.
+
 ## Privacy
 
 Chat transcripts (the last 200 events per chat) are persisted in plain text
