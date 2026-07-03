@@ -41,8 +41,8 @@ if [ "$(tmux show-option -gqv @vanzi_hub_legacy_keys)" = "on" ]; then
   tmux bind-key -r ')' run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" claude '' new"
 fi
 
-# Outside the ACP popup this is the normal tmux session chooser. Inside an
-# acp-* popup workspace it becomes the ACP chat/window chooser with live status.
+# Outside the ACP popup this is the normal tmux session chooser. Inside a
+# vz-* popup workspace it becomes the ACP chat/window chooser with live status.
 tmux bind-key s run-shell "sh \"$CURRENT_DIR/scripts/switcher.sh\" \"#{session_name}\" \"#{pane_id}\""
 
 SESSION_PREFIX="$(tmux show-option -gqv @vanzi_hub_session_prefix)"

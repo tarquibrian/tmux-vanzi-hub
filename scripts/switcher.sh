@@ -20,7 +20,7 @@ if is_acp_session "$CURRENT_SESSION"; then
   # Titles are clipped with an ellipsis and padded so the columns line up.
   chat_line="$provider_style$icon#[default] #[bold]#{p32:#{=/30/…:$title}}#[default] $status_style$glyph#{p11:#{@vanzi_hub_status}}#[default] #[fg=colour244]#{t/f/%R:window_activity}  $meta#[default]"
   # Session rows (the tree parents) read as the project instead of the raw
-  # acp-<slug>-<hash> name; the active window's options carry the path.
+  # vz-<slug> name; the active window's options carry the path.
   session_line="#[bold]▣ #{?#{@vanzi_hub_project_path},#{b:@vanzi_hub_project_path},#{session_name}}#[default]  #[fg=colour244]#{@vanzi_hub_project_path}#[default]"
   format="#{?window_format,$chat_line,$session_line}"
   prefix="$(tmux_option @vanzi_hub_session_prefix vz)"

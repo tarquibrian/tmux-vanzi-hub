@@ -6,6 +6,10 @@ import assert from "node:assert/strict";
 process.stdout.isTTY = true;
 process.stdout.columns = 100;
 process.stdout.rows = 30;
+// The composer accent falls back to the provider color only when no
+// @vanzi_hub_accent tmux option is readable; drop TMUX so a developer's own
+// theme cannot leak into the assertions.
+delete process.env.TMUX;
 
 const { PopupUi } = await import("../bin/vanzi-hub.mjs");
 

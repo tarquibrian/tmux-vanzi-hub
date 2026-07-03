@@ -36,11 +36,11 @@ acp_project_session_name() {
   printf "%s-%s-%s" "$prefix" "$project_slug" "$project_hash"
 }
 
-# Friendly session resolution: sessions are named acp-<slug> (with -2/-3 when
-# another project owns the slug) so tree views read cleanly. Identity lives in
-# the @vanzi_hub_project_path session option, not the name; the legacy
-# acp-<slug>-<hash> deterministic name is still honored so live sessions from
-# older versions keep working until they die.
+# Friendly session resolution: sessions are named <prefix>-<slug> (vz-<slug>
+# by default, with -2/-3 when another project owns the slug) so tree views
+# read cleanly. Identity lives in the @vanzi_hub_project_path session option,
+# not the name; the legacy <prefix>-<slug>-<hash> deterministic name is still
+# honored so live sessions from older versions keep working until they die.
 acp_project_session() {
   project_path="$1"
   prefix="$(tmux_option @vanzi_hub_session_prefix vz)"
@@ -281,8 +281,16 @@ set_window_metadata() {
   tmux set-window-option -t "$target" -q @vanzi_hub_model ""
   tmux set-window-option -t "$target" -q @vanzi_hub_effort ""
   tmux set-window-option -t "$target" -q @vanzi_hub_title "$window_title"
-  # Window-status labels are not re-rendered on option changes; force it.
-  tmux refresh-client -S 2>/dev/null || true
+  refresh_status_line
+}
+
+# Window-status labels are not re-rendered on option changes; force it. A bare
+# refresh-client -S fails inside run-shell (no current client), so refresh
+# every attached client explicitly.
+refresh_status_line() {
+  for _client in $(tmux list-clients -F '#{client_name}' 2>/dev/null); do
+    tmux refresh-client -S -t "$_client" 2>/dev/null || true
+  done
 }
 
 shell_quote() {

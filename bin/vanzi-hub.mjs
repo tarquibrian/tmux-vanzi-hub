@@ -511,8 +511,9 @@ async function runTmuxAction(args) {
 
       case "delete": {
         // The tmux menu already confirmed, so delete directly and send the popup
-        // back to its menu instead of re-prompting through /delete.
-        const result = await hub.call("delete_chat", { chatId });
+        // back to its menu instead of re-prompting through /delete. keepPane
+        // stops the daemon from killing the window the menu returns to.
+        const result = await hub.call("delete_chat", { chatId, keepPane: context.pane || "" });
         if (context.pane) submitCommandToTmuxPane(context.pane, "/menu");
         tmuxDisplayMessage(
           context,
@@ -1084,8 +1085,20 @@ async function runRenderMarkdown() {
   process.stdout.write(ui.renderMarkdown(input));
 }
 
-// Attention first: chats waiting on the user (permission/auth) or broken
-// float above other live chats, which float above saved ones.
+// tmux-invoked subcommands must not exit non-zero: run-shell turns that into
+// a blocking error banner over the pane. Surface failures as a status message.
+function reportTmuxCommandFailure(args, error) {
+  const context = {
+    client: typeof args.client === "string" ? args.client : "",
+    pane: typeof args.pane === "string" ? args.pane : "",
+  };
+  try {
+    tmuxDisplayMessage(context, `vanzi-hub: ${error.message || String(error)}`);
+  } catch {
+    // Nothing left to report to.
+  }
+}
+
 async function main() {
   const [command = "ui", ...rest] = process.argv.slice(2);
   const args = parseArgs(rest);
@@ -1107,19 +1120,19 @@ async function main() {
       await runProjectChat(args);
       break;
     case "tmux-menu":
-      await runTmuxMenu(args);
+      await runTmuxMenu(args).catch((error) => reportTmuxCommandFailure(args, error));
       break;
     case "tmux-toggle-menu":
-      await runTmuxToggleMenu(args);
+      await runTmuxToggleMenu(args).catch((error) => reportTmuxCommandFailure(args, error));
       break;
     case "tmux-close-menu":
-      await runTmuxCloseMenu(args);
+      await runTmuxCloseMenu(args).catch((error) => reportTmuxCommandFailure(args, error));
       break;
     case "tmux-panel":
-      await runTmuxPanel(args);
+      await runTmuxPanel(args).catch((error) => reportTmuxCommandFailure(args, error));
       break;
     case "tmux-action":
-      await runTmuxAction(args);
+      await runTmuxAction(args).catch((error) => reportTmuxCommandFailure(args, error));
       break;
     case "stop":
       await runStop();

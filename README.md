@@ -69,7 +69,7 @@ wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
 - `prefix+0`: open Claude for the current project.
 - `prefix+(`: create a new Codex chat for the current project.
 - `prefix+)`: create a new Claude chat for the current project.
-- `prefix+s`: outside the popup, open normal tmux sessions; inside `acp-*`,
+- `prefix+s`: outside the popup, open normal tmux sessions; inside `vz-*`,
   open the tmux tree selector for live ACP chats sorted by recent activity —
   aligned columns (icon, title, status, last-activity time, model/effort),
   session rows read as the project name, and the bottom pane previews the
@@ -85,7 +85,7 @@ wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
 
 A chat is **not** a pane or a window: it lives in the background daemon (the
 ACP adapter process plus the transcript) and is persisted in the registry.
-Each tmux window inside the hidden `acp-*` workspace is only a **view** onto
+Each tmux window inside the hidden `vz-*` workspace is only a **view** onto
 one chat, and the pane inside it runs a disposable UI client. Consequences:
 
 - Killing a pane or window (`prefix+x`, `prefix+&`) closes the view; the chat
@@ -104,10 +104,10 @@ The old `tmux-agent-hub` directory is left installed as a rollback path. The ACP
 hub owns the active bindings while it is loaded from `tmux/conf.d/20-plugins.conf`.
 
 `prefix+m` opens an existing internal tmux workspace for the current project,
-named `acp-<project>` (with a `-2`/`-3` suffix when two projects share a
+named `vz-<project>` (with a `-2`/`-3` suffix when two projects share a
 basename; the owning project is tracked in the `@vanzi_hub_project_path`
-session option, and legacy `acp-project-hash` sessions are reused while they
-live). When no live or saved chat exists for the
+session option, the prefix is configurable via `@vanzi_hub_session_prefix`,
+and legacy `acp-project-hash` sessions are reused while they live). When no live or saved chat exists for the
 project, a native tmux menu offers a new chat here (one entry per provider,
 default first) plus the most recent chats open in other projects so you can
 jump to one instead; only when the hub has no chats anywhere does it create a
