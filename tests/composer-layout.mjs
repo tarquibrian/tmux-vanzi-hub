@@ -43,13 +43,14 @@ const session = (line = "") => ({ pinned: true, line, cursor: line.length });
   const ui = makeUi();
   const layout = ui.rawInputLayout(session(""));
   assert.equal(layout.boxed, true, "boxed on 30 rows");
-  // gap + top rule + 1 input row + footer = 4 composer rows (half-box style)
-  assert.equal(layout.outputBottom, 30 - 4);
-  assert.equal(layout.gapRow, 26, "blank gap row between transcript and box");
-  assert.equal(layout.dividerRow, 27, "top rule row");
-  assert.equal(layout.inputRow, 28);
-  assert.equal(layout.boxBottomRow, null, "half-box has no bottom border");
+  // gap + top rule + 1 input row + bottom rule + footer = 5 composer rows
+  assert.equal(layout.outputBottom, 30 - 5);
+  assert.equal(layout.gapRow, 25, "blank gap row between transcript and box");
+  assert.equal(layout.dividerRow, 26, "top rule row");
+  assert.equal(layout.inputRow, 27);
+  assert.equal(layout.boxBottomRow, 28, "bottom rule wraps the input");
   assert.equal(layout.footerRow, 29);
+  assert.ok(layout.composerRows.includes(layout.boxBottomRow), "bottom rule cleared on layout change");
   assert.ok(layout.composerRows.includes(layout.gapRow), "gap row cleared on layout change");
   const flatWidth = ui.rawInputTextWidth(session(""), 100, false);
   assert.equal(layout.inputWidth, flatWidth, "flush band: same input width as flat");
@@ -107,8 +108,9 @@ const session = (line = "") => ({ pinned: true, line, cursor: line.length });
   }
   const plain = strip(out);
   assert.ok(/─ .*idle.*─/.test(plain), "top rule painted with embedded status");
-  assert.ok(!plain.includes("╭") && !plain.includes("╰"), "no box corners (half-box style)");
+  assert.ok(!plain.includes("╭") && !plain.includes("╰"), "no box corners");
   assert.ok(!plain.includes("│"), "no side borders");
+  assert.ok((plain.match(/─{20,}/g) || []).length >= 1, "bottom rule painted");
   assert.ok(plain.includes("hello box"), "input text painted");
   assert.ok(out.includes("\x1b[38;5;43m"), "codex accent tints the rule");
 }
