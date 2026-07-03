@@ -107,7 +107,8 @@ const session = (line = "") => ({ pinned: true, line, cursor: line.length });
     process.stdout.write = original;
   }
   const plain = strip(out);
-  assert.ok(/─ .*idle.*─/.test(plain), "top rule painted with embedded status");
+  assert.ok(/─ .*Codex.*─/.test(plain), "top rule carries the provider identity while quiet");
+  assert.ok(!plain.includes("idle"), "quiet status is not spelled out in the rule");
   assert.ok(!plain.includes("╭") && !plain.includes("╰"), "no box corners");
   assert.ok(!plain.includes("│"), "no side borders");
   assert.ok((plain.match(/─{20,}/g) || []).length >= 1, "bottom rule painted");
