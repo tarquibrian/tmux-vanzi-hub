@@ -70,6 +70,23 @@ advertises and `/auth <id|n>` runs one (browser OAuth flows open externally).
 Credentials are stored by the agent CLIs themselves (`~/.codex`,
 `~/.claude`), never by the hub.
 
+## Adapters and model updates
+
+The hub has **no hardcoded model list**: models, modes, and reasoning efforts
+come from the adapter at session start, and the adapter reads them from the
+agent CLI underneath. When a provider ships a new model, you get it by
+updating those two layers — no plugin change needed:
+
+- The adapter versions are pinned in `agents.json`
+  (`@zed-industries/codex-acp@x.y.z`, `@agentclientprotocol/claude-agent-acp@x.y.z`).
+  Bump the pin (or use `@latest` if you prefer trailing the newest release)
+  in `~/.config/tmux-vanzi-hub/agents.json`.
+- Keep the underlying CLIs current (`codex`, `claude`) the way you already
+  update them.
+
+`vanzi-hub.mjs health` prints the pinned adapter versions. After changing a
+pin, restart the daemon (`vanzi-hub.mjs stop`).
+
 ## Privacy
 
 Chat transcripts (the last 200 events per chat) are persisted in plain text
@@ -98,10 +115,10 @@ wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
   list. Chats are saved automatically (every event persists to the
   registry), so saved is the default state: lists show a status only for
   live chats. Set `VANZI_HUB_INTERACTIVE_UI=0` for the old text menu.
-- `prefix+9`: open Codex for the current project.
-- `prefix+0`: open Claude for the current project.
-- `prefix+(`: create a new Codex chat for the current project.
-- `prefix+)`: create a new Claude chat for the current project.
+- `prefix+9`: create a new Codex chat for the current project.
+- `prefix+0`: create a new Claude chat for the current project.
+- `prefix+(`: focus the most recent Codex chat for the current project.
+- `prefix+)`: focus the most recent Claude chat for the current project.
 - `prefix+s`: outside the popup, open normal tmux sessions; inside `vz-*`,
   open the tmux tree selector for live ACP chats sorted by recent activity —
   aligned columns (icon, title, status, last-activity time, model/effort),
@@ -146,9 +163,9 @@ default first) plus the most recent chats open in other projects so you can
 jump to one instead; only when the hub has no chats anywhere does it create a
 chat directly with the default provider. Those workspaces are hidden from the normal
 `prefix+s` session chooser, but inside the popup they behave like tmux:
-`prefix+m` detaches/minimizes, `prefix+9` selects or creates the Codex window
-for the current project, and `prefix+0` selects or creates the Claude window
-for the current project. `prefix+s` inside any ACP workspace opens the normal
+`prefix+m` detaches/minimizes, `prefix+9`/`prefix+0` create a fresh
+Codex/Claude chat window, and `prefix+(`/`prefix+)` focus the provider's most
+recent existing window for the current project. `prefix+s` inside any ACP workspace opens the normal
 tmux tree-style ACP chat selector with chats from all project ACP workspaces, so
 you can jump between project agents without visiting the normal tmux project
 session first. Mini action menus live under `prefix+y`.

@@ -31,14 +31,16 @@ tmux bind-key y run-shell "sh \"$CURRENT_DIR/scripts/tmux-menu.sh\" \"#{pane_cur
 tmux bind-key M run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" '' '' menu"
 
 if [ "$(tmux show-option -gqv @vanzi_hub_legacy_keys)" = "on" ]; then
+  # 9/0 always create a fresh chat (predictable with many chats around);
+  # (/) focus the most recent existing chat for the provider.
   tmux unbind-key -q 9
   tmux unbind-key -q 0
   tmux unbind-key -q '('
   tmux unbind-key -q ')'
-  tmux bind-key -r 9 run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" codex '' open"
-  tmux bind-key -r 0 run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" claude '' open"
-  tmux bind-key -r '(' run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" codex '' new"
-  tmux bind-key -r ')' run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" claude '' new"
+  tmux bind-key -r 9 run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" codex '' new"
+  tmux bind-key -r 0 run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" claude '' new"
+  tmux bind-key -r '(' run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" codex '' open"
+  tmux bind-key -r ')' run-shell "sh \"$CURRENT_DIR/scripts/workspace.sh\" \"#{pane_current_path}\" \"#{session_name}\" \"#{client_name}\" \"#{pane_id}\" claude '' open"
 fi
 
 # Outside the ACP popup this is the normal tmux session chooser. Inside a
