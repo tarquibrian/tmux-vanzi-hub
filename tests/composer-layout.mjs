@@ -51,9 +51,8 @@ const session = (line = "") => ({ pinned: true, line, cursor: line.length });
   assert.equal(layout.boxBottomRow, null, "half-box has no bottom border");
   assert.equal(layout.footerRow, 29);
   assert.ok(layout.composerRows.includes(layout.gapRow), "gap row cleared on layout change");
-  // interior loses only the left indent vs the flat layout
   const flatWidth = ui.rawInputTextWidth(session(""), 100, false);
-  assert.equal(layout.inputWidth, flatWidth - 2);
+  assert.equal(layout.inputWidth, flatWidth, "flush band: same input width as flat");
 }
 
 // --- Degrade rule ---------------------------------------------------------------
