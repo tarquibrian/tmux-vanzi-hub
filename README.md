@@ -1,6 +1,48 @@
 # tmux-vanzi-hub
 
-Fresh ACP-based agent hub for tmux popups.
+Vanzi Hub — a persistent multi-agent hub for tmux. Run Codex, Claude Code,
+and any [Agent Client Protocol](https://agentclientprotocol.com) agent in
+tmux popups: chats live in a background daemon, survive popup and daemon
+restarts, and every list shows live status with a transcript preview.
+
+## Requirements
+
+- tmux >= 3.4
+- Node.js >= 18 (no npm dependencies; the plugin is self-contained)
+- ACP adapters are fetched on demand via `npx` (Codex: `codex-acp`,
+  Claude Code: `claude-agent-acp`); each provider authenticates through
+  its own CLI/account the first time (`/auth` inside a chat)
+
+Run `vanzi-hub.mjs health` to check your environment:
+
+```sh
+node ~/.config/tmux/plugins/tmux-vanzi-hub/bin/vanzi-hub.mjs health
+```
+
+## Installation
+
+With [TPM](https://github.com/tmux-plugins/tpm):
+
+```tmux
+set -g @plugin 'tarquibrian/tmux-vanzi-hub'
+```
+
+Manual:
+
+```sh
+git clone https://github.com/tarquibrian/tmux-vanzi-hub ~/.config/tmux/plugins/tmux-vanzi-hub
+```
+
+```tmux
+run '~/.config/tmux/plugins/tmux-vanzi-hub/vanzi-hub.tmux'
+```
+
+## Privacy
+
+Chat transcripts (the last 200 events per chat) are persisted in plain text
+in `~/.cache/tmux-vanzi-hub/registry.json` so chats survive restarts. Delete
+a chat (`Ctrl+D` in any picker, or `/delete`) to remove its transcript, or
+wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
 
 ## Keys
 

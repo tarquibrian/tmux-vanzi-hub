@@ -9666,6 +9666,17 @@ async function connectHub(timeoutMs = 1000) {
   });
 }
 
+// Keep the daemon log bounded: past 1MB the old log rolls to daemon.log.1
+// (one generation is enough to debug "what happened before the restart").
+function rotateDaemonLog() {
+  try {
+    const { size } = fs.statSync(LOG_PATH);
+    if (size > 1024 * 1024) fs.renameSync(LOG_PATH, `${LOG_PATH}.1`);
+  } catch {
+    // No log yet.
+  }
+}
+
 async function ensureDaemon() {
   await mkdirp(HUB_DIR);
 
@@ -9675,6 +9686,7 @@ async function ensureDaemon() {
     // Start below.
   }
 
+  rotateDaemonLog();
   const logFd = fs.openSync(LOG_PATH, "a");
   const child = spawn(process.execPath, [SCRIPT_PATH, "daemon"], {
     detached: true,
@@ -10565,6 +10577,56 @@ async function runStatus() {
   }
 }
 
+// Environment checkup for issue reports and first-run debugging.
+async function runHealth() {
+  const ok = (label, value) => console.log(`✓ ${label}: ${value}`);
+  const bad = (label, value) => console.log(`✗ ${label}: ${value}`);
+
+  const nodeMajor = Number(process.versions.node.split(".")[0]);
+  (nodeMajor >= 18 ? ok : bad)("node", `${process.version}${nodeMajor < 18 ? " (need >= 18)" : ""}`);
+
+  const tmux = spawnSync("tmux", ["-V"], { encoding: "utf8" });
+  if (tmux.status === 0) {
+    const version = tmux.stdout.trim();
+    const number = Number.parseFloat(version.replace(/^tmux\s+/i, ""));
+    (Number.isFinite(number) && number >= 3.4 ? ok : bad)(
+      "tmux",
+      `${version}${Number.isFinite(number) && number < 3.4 ? " (need >= 3.4)" : ""}`,
+    );
+  } else {
+    bad("tmux", "not found in PATH");
+  }
+
+  try {
+    await mkdirp(HUB_DIR);
+    fs.accessSync(HUB_DIR, fs.constants.W_OK);
+    ok("state dir", HUB_DIR);
+  } catch (error) {
+    bad("state dir", `${HUB_DIR} not writable (${error.message})`);
+  }
+
+  const registry = await readJsonIfExists(REGISTRY_PATH);
+  const chatCount = Array.isArray(registry?.chats) ? registry.chats.length : 0;
+  ok("registry", `${chatCount} saved chat(s)`);
+
+  const daemonUp = await canConnectToSocket(SOCKET_PATH);
+  console.log(`${daemonUp ? "✓" : "·"} daemon: ${daemonUp ? "running" : "stopped (starts on demand)"} ${SOCKET_PATH}`);
+
+  const config = await loadConfig();
+  for (const [name, agent] of Object.entries(config.agents || {})) {
+    const command = agent?.command;
+    if (!command) {
+      bad(`agent ${name}`, "no command configured");
+      continue;
+    }
+    const which = spawnSync("sh", ["-c", `command -v ${JSON.stringify(command)}`], { encoding: "utf8" });
+    (which.status === 0 ? ok : bad)(
+      `agent ${name}`,
+      which.status === 0 ? `${command} ${(agent.args || []).join(" ")}`.trim() : `${command} not found in PATH`,
+    );
+  }
+}
+
 async function runProjectChat(args) {
   const cwd = resolveProjectRoot(args.cwd || process.cwd());
   const registry = await readJsonIfExists(REGISTRY_PATH);
@@ -10971,6 +11033,9 @@ async function main() {
       break;
     case "ui":
       await runUi(args);
+      break;
+    case "health":
+      await runHealth();
       break;
     case "status":
       await runStatus();

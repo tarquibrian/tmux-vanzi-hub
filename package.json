@@ -1,0 +1,21 @@
+{
+  "name": "tmux-vanzi-hub",
+  "version": "0.1.0",
+  "description": "Vanzi Hub — a persistent multi-agent ACP hub for tmux: Codex, Claude Code, and any Agent Client Protocol agent in popups, with saved transcripts",
+  "type": "module",
+  "bin": {
+    "vanzi-hub": "bin/vanzi-hub.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tarquibrian/tmux-vanzi-hub"
+  },
+  "author": "Brian Tarqui",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node tests/picker.mjs && node tests/composer-layout.mjs && node tests/autocomplete.mjs && node tests/render-width.mjs && node tests/render-stream.mjs && node tests/render-live-table.mjs && node tests/smoke.mjs"
+  }
+}
