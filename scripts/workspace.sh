@@ -15,6 +15,17 @@ ACTION="${7:-open}"
 
 [ -n "$CURRENT_PATH" ] || CURRENT_PATH="$HOME"
 
+# prefix+M while already on the ephemeral menu window toggles it off: send the
+# menu process an Escape so it backs out (reveals the recent chat or minimizes)
+# and exits, closing its own window — instead of stacking another menu.
+if [ "$ACTION" = "menu" ] && [ -n "$TARGET_PANE" ]; then
+  current_action="$(tmux display-message -p -t "$TARGET_PANE" "#{@vanzi_hub_action}" 2>/dev/null || true)"
+  if [ "$current_action" = "menu" ]; then
+    tmux send-keys -t "$TARGET_PANE" Escape
+    exit 0
+  fi
+fi
+
 if is_acp_session "$CURRENT_SESSION"; then
   if [ "$ACTION" = "toggle" ] && [ -n "$TARGET_CLIENT" ]; then
     tmux detach-client -t "$TARGET_CLIENT"
