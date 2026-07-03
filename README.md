@@ -349,10 +349,10 @@ The editor supports left/right cursor movement, Home/End or `Ctrl+A`/`Ctrl+E`,
 `Ctrl+U`, `Ctrl+K`, `Ctrl+W`, `Ctrl+Y`, `Alt+B`, `Alt+F`, Up/Down
 history, and `Ctrl+R` reverse history search. Typing `/` or `@` opens an
 autocomplete dropdown below the composer (it temporarily replaces the footer):
-`↑`/`↓`/`Tab` cycle candidates, `Enter` or `→` accepts the highlighted one
-(`Enter` still submits when the typed command is already exact), and `Esc`
-dismisses it until the input changes. On the flat fallback layout, Tab keeps
-the classic unique-match completion. Input history
+`Ctrl+N`/`Ctrl+P` (or `↑`/`↓`) travel the candidates, `Tab`, `Enter`, or `→`
+accepts the highlighted one (`Enter` still submits when the typed command is
+already exact), and `Esc` dismisses it until the input changes. On the flat
+fallback layout, Tab keeps the classic unique-match completion. Input history
 is persisted locally for future popups. Drafts are persisted per chat while
 editing and restored when the popup is reopened; a submitted prompt clears its
 draft. Double `Esc` clears the current input and stores it in the local kill

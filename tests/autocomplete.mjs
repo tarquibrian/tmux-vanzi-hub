@@ -81,6 +81,10 @@ const session = (line, cursor = line.length) => ({
   assert.equal(ui.activeAutocomplete(s).index, 1 % count);
   assert.ok(ui.handleAutocompleteKey(s, "", { name: "up" }), "up cycles back");
   assert.equal(ui.activeAutocomplete(s).index, 0);
+  assert.ok(ui.handleAutocompleteKey(s, "", { name: "n", ctrl: true }), "ctrl+n cycles down");
+  assert.equal(ui.activeAutocomplete(s).index, 1 % count);
+  assert.ok(ui.handleAutocompleteKey(s, "", { name: "p", ctrl: true }), "ctrl+p cycles up");
+  assert.equal(ui.activeAutocomplete(s).index, 0);
 
   assert.ok(ui.handleAutocompleteKey(s, "", { name: "return" }), "enter accepts a completion");
   assert.match(s.line, /^\/\w+ $/, "line replaced with command + trailing space");
@@ -108,6 +112,13 @@ const session = (line, cursor = line.length) => ({
   const s = session("/he");
   assert.ok(ui.handleAutocompleteKey(s, "", { name: "right" }), "right at EOL accepts");
   assert.match(s.line, /^\/help /);
+}
+{
+  const ui = makeUi();
+  const s = session("/mo");
+  assert.ok(ui.handleAutocompleteKey(s, "", { name: "tab" }), "tab completes the selection");
+  assert.match(s.line, /^\/\w+ $/, "tab replaced the line with the completion");
+  assert.equal(s.cursor, s.line.length);
 }
 
 // --- Esc suppression --------------------------------------------------------------
