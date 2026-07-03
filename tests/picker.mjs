@@ -199,4 +199,64 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   );
 }
 
+// --- showPermissionPicker ---------------------------------------------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  const calls = [];
+  Object.assign(ui, {
+    currentChat: { id: "c1" },
+    pendingPermission: {
+      permissionId: "perm-1",
+      toolCall: { title: "Ready to code?" },
+      options: [
+        { optionId: "opt-allow", name: "Yes, auto-accept edits", kind: "allow_always" },
+        { optionId: "opt-manual", name: "Yes, manually approve", kind: "allow_once" },
+        { optionId: "opt-no", name: "No, keep planning", kind: "reject_once" },
+      ],
+    },
+    pickerSupported: () => true,
+    canPaintPinned: () => true,
+    hub: { call: async (method, params) => { calls.push({ method, params }); } },
+    interactivePick: async (config) => {
+      // The picker was handed exactly the pending options, first preselected.
+      assert.equal(config.items.length, 3, "one item per option");
+      assert.equal(config.items[0].value, "opt-allow");
+      assert.ok(config.items[0].current, "first option preselected");
+      assert.ok(config.title.includes("Ready to code?"), "tool title in the picker title");
+      return "opt-manual";
+    },
+  });
+
+  const handled = await ui.showPermissionPicker();
+  assert.equal(handled, true, "picker handled the pending permission");
+  assert.equal(calls.length, 1, "one response sent");
+  assert.deepEqual(calls[0], {
+    method: "permission_response",
+    params: { permissionId: "perm-1", optionId: "opt-manual" },
+  });
+  assert.equal(ui.pendingPermission, null, "pending cleared after responding");
+}
+{
+  // Esc keeps the request pending so /allow <n> still works.
+  const ui = Object.create(PopupUi.prototype);
+  const pending = { permissionId: "perm-2", options: [{ optionId: "o", name: "ok" }], toolCall: null };
+  let sent = false;
+  Object.assign(ui, {
+    pendingPermission: pending,
+    pickerSupported: () => true,
+    canPaintPinned: () => true,
+    hub: { call: async () => { sent = true; } },
+    interactivePick: async () => null,
+  });
+  assert.equal(await ui.showPermissionPicker(), true, "handled even on cancel");
+  assert.equal(sent, false, "no response sent on Esc");
+  assert.equal(ui.pendingPermission, pending, "request still pending");
+}
+{
+  // No pending permission → not handled, falls through to normal Enter.
+  const ui = Object.create(PopupUi.prototype);
+  Object.assign(ui, { pendingPermission: null, pickerSupported: () => true, canPaintPinned: () => true });
+  assert.equal(await ui.showPermissionPicker(), false, "nothing to pick");
+}
+
 console.log("picker test passed");

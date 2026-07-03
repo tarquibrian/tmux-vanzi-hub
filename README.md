@@ -240,6 +240,12 @@ and tmux menus follow the same order.
 - `/s <scope>`: filter scope with `project` or `all`.
 - `/clear`: reset menu filters.
 - `/cancel`: cancel the current turn and pending permission requests.
+- Permission requests (including the plan-mode "ready to code?" approval):
+  press `Enter` on an empty line — or `/allow` with no number — to open an
+  interactive picker over the options (`Ctrl+N`/`Ctrl+P` or arrows to move,
+  `Enter` to respond, `Esc` to keep it pending). `/allow <n>` still picks
+  option `n` directly and `/deny` rejects. Options are whatever the adapter
+  sends; ACP has no per-option preview or free-text note channel.
 - `/rename <title>` or `/title <title>`: name the current chat for menus/search.
 - `/close`: stop the active ACP adapter while keeping saved session metadata.
 - `/delete`: permanently delete the current chat (asks to confirm). When the
