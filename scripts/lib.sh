@@ -346,13 +346,19 @@ set_workspace_metadata() {
   # back to blue. Applied to the icon on inactive tabs only.
   acp_provider_style="#{?#{==:#{@vanzi_hub_provider},claude},#[fg=colour173],#{?#{==:#{@vanzi_hub_provider},codex},#[fg=colour39],#[fg=colour39]}}"
   acp_icon="#{?#{@vanzi_hub_provider_icon},#{@vanzi_hub_provider_icon},#{@vanzi_hub_provider_short}}"
-  acp_attention="#{?#{m/r:^(responding|thinking|working|planning|starting|cancelling|permission|auth|error)$,#{@vanzi_hub_status}}, #{?#{==:#{@vanzi_hub_status},error},#[fg=red],#{?#{m/r:^(permission|auth)$,#{@vanzi_hub_status}},#[fg=yellow],#[fg=cyan]}}#{@vanzi_hub_status_glyph}#[default],}"
+  acp_attention_states="responding|thinking|working|planning|starting|cancelling|permission|auth|error"
+  # Inactive tabs: semantic hue for the attention glyph (dark bg reads it fine).
+  acp_attention="#{?#{m/r:^($acp_attention_states)$,#{@vanzi_hub_status}}, #{?#{==:#{@vanzi_hub_status},error},#[fg=red],#{?#{m/r:^(permission|auth)$,#{@vanzi_hub_status}},#[fg=yellow],#[fg=cyan]}}#{@vanzi_hub_status_glyph}#[default],}"
+  # Active tab: the glyph inherits the current-style (black on the accent bar)
+  # like the icon and title; its shape (◐ ⏸ ⊘ ✗) already carries the state, so
+  # a semantic tint would only cost contrast on the punk background.
+  acp_attention_active="#{?#{m/r:^($acp_attention_states)$,#{@vanzi_hub_status}}, #{@vanzi_hub_status_glyph},}"
   acp_title="#{?#{@vanzi_hub_title},#{@vanzi_hub_title},#W}"
   # Inactive: provider-colored icon. Active (current): the icon inherits the
   # window-status-current-style so it reads black like the title on the accent
   # background, instead of a low-contrast provider tint.
   acp_window_status_format=" $acp_provider_style$acp_icon#[default] $acp_title$acp_attention "
-  acp_window_status_current_format=" $acp_icon $acp_title$acp_attention "
+  acp_window_status_current_format=" $acp_icon $acp_title$acp_attention_active "
   tmux set-option -t "$session" -q window-status-format "$acp_window_status_format"
   tmux set-option -t "$session" -q window-status-current-format "$acp_window_status_current_format"
   tmux set-option -t "$session" -q window-status-separator ""
