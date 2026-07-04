@@ -43,8 +43,8 @@ with **provider-tinted accents** overridden by semantic state colors.
 
 | Token            | Value            | Use |
 |------------------|------------------|-----|
-| `provider.claude`| `colour170`      | Claude accents |
-| `provider.codex` | `colour43`       | Codex accents |
+| `provider.claude`| `colour173`      | Claude accents (characteristic orange) |
+| `provider.codex` | `colour39`       | Codex accents (characteristic blue) |
 | `provider.other` | `colour39`       | any other adapter |
 | `sem.ok`         | ANSI green       | idle, success, done markers |
 | `sem.busy`       | ANSI cyan        | responding/thinking/working, spinner |

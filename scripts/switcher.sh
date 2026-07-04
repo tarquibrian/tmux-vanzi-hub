@@ -14,7 +14,7 @@ if is_acp_session "$CURRENT_SESSION"; then
   title="#{?#{@vanzi_hub_title},#{@vanzi_hub_title},#{window_name}}"
   meta="#{?#{@vanzi_hub_mode},#{@vanzi_hub_mode}  ,}#{?#{@vanzi_hub_model},#{@vanzi_hub_model} ,}#{?#{@vanzi_hub_effort},#{@vanzi_hub_effort}  ,}#{?#{@vanzi_hub_plan},steps #{@vanzi_hub_plan},}"
   status_style="#{?#{==:#{@vanzi_hub_status},error},#[fg=red],#{?#{==:#{@vanzi_hub_status},idle},#[fg=green],#{?#{==:#{@vanzi_hub_status},responding},#[fg=green],#{?#{==:#{@vanzi_hub_status},permission},#[fg=yellow],#{?#{==:#{@vanzi_hub_status},auth},#[fg=yellow],#{?#{==:#{@vanzi_hub_status},starting},#[fg=cyan],#[fg=colour244]}}}}}}"
-  provider_style="#{?#{==:#{@vanzi_hub_provider},claude},#[fg=colour170],#{?#{==:#{@vanzi_hub_provider},codex},#[fg=colour43],#[fg=colour39]}}"
+  provider_style="#{?#{==:#{@vanzi_hub_provider},claude},#[fg=colour173],#{?#{==:#{@vanzi_hub_provider},codex},#[fg=colour39],#[fg=colour39]}}"
 
   # Window rows: icon · fixed-width title · status · last activity · meta.
   # Titles are clipped with an ellipsis and padded so the columns line up.

@@ -342,11 +342,18 @@ set_workspace_metadata() {
   # Inside the ACP workspace, show minimal chat labels in the status bar:
   # provider icon (accent-colored), renameable title, and a status glyph only
   # when the chat needs attention (busy/permission/auth/error) — idle is quiet.
-  acp_provider_style="#{?#{==:#{@vanzi_hub_provider},claude},#[fg=colour170],#{?#{==:#{@vanzi_hub_provider},codex},#[fg=colour43],#[fg=colour39]}}"
+  # Codex = characteristic blue, Claude = characteristic orange; unknown falls
+  # back to blue. Applied to the icon on inactive tabs only.
+  acp_provider_style="#{?#{==:#{@vanzi_hub_provider},claude},#[fg=colour173],#{?#{==:#{@vanzi_hub_provider},codex},#[fg=colour39],#[fg=colour39]}}"
   acp_icon="#{?#{@vanzi_hub_provider_icon},#{@vanzi_hub_provider_icon},#{@vanzi_hub_provider_short}}"
   acp_attention="#{?#{m/r:^(responding|thinking|working|planning|starting|cancelling|permission|auth|error)$,#{@vanzi_hub_status}}, #{?#{==:#{@vanzi_hub_status},error},#[fg=red],#{?#{m/r:^(permission|auth)$,#{@vanzi_hub_status}},#[fg=yellow],#[fg=cyan]}}#{@vanzi_hub_status_glyph}#[default],}"
-  acp_window_status_format=" $acp_provider_style$acp_icon#[default] #{?#{@vanzi_hub_title},#{@vanzi_hub_title},#W}$acp_attention "
+  acp_title="#{?#{@vanzi_hub_title},#{@vanzi_hub_title},#W}"
+  # Inactive: provider-colored icon. Active (current): the icon inherits the
+  # window-status-current-style so it reads black like the title on the accent
+  # background, instead of a low-contrast provider tint.
+  acp_window_status_format=" $acp_provider_style$acp_icon#[default] $acp_title$acp_attention "
+  acp_window_status_current_format=" $acp_icon $acp_title$acp_attention "
   tmux set-option -t "$session" -q window-status-format "$acp_window_status_format"
-  tmux set-option -t "$session" -q window-status-current-format "$acp_window_status_format"
+  tmux set-option -t "$session" -q window-status-current-format "$acp_window_status_current_format"
   tmux set-option -t "$session" -q window-status-separator ""
 }
