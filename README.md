@@ -150,9 +150,6 @@ one chat, and the pane inside it runs a disposable UI client. Consequences:
 - Splitting panes inside a chat window is plain tmux; extra panes are not
   chats.
 
-The old `tmux-agent-hub` directory is left installed as a rollback path. The ACP
-hub owns the active bindings while it is loaded from `tmux/conf.d/20-plugins.conf`.
-
 `prefix+m` opens an existing internal tmux workspace for the current project,
 named `vz-<project>` (with a `-2`/`-3` suffix when two projects share a
 basename; the owning project is tracked in the `@vanzi_hub_project_path`
