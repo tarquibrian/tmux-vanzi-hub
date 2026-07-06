@@ -117,7 +117,7 @@ const session = (line = "") => ({ pinned: true, line, cursor: line.length });
   assert.ok(!plain.includes("│"), "no side borders");
   assert.ok((plain.match(/─{20,}/g) || []).length >= 1, "bottom rule painted");
   assert.ok(plain.includes("hello box"), "input text painted");
-  assert.ok(out.includes("\x1b[38;5;43m"), "codex accent tints the rule");
+  assert.ok(out.includes("\x1b[38;5;39m"), "codex accent (blue) tints the rule");
 }
 
 // --- Attention state overrides the border color ----------------------------------
