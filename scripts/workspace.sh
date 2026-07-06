@@ -120,12 +120,13 @@ ensure_workspace() {
 
   # Reopening a specific chat: jump to the window already hosting that chat id
   # (its name may differ from the canonical one, e.g. a "<provider>-new"
-  # window) instead of spawning a duplicate.
+  # window) instead of spawning a duplicate. Do NOT re-seed its window
+  # metadata: the running UI already holds the real title, and the "Restored
+  # chat" placeholder would clobber it in the tab label and the rename prompt.
   if [ -n "$CHAT_ID" ] && [ "$ACTION" != "new" ]; then
     chat_window_id="$(window_id_for_chat "$SESSION" "$CHAT_ID" 2>/dev/null || true)"
     if [ -n "$chat_window_id" ] && ! window_is_dead "$chat_window_id"; then
       set_workspace_metadata "$SESSION" "$PROJECT_PATH" "$TARGET_CLIENT" "$TARGET_PANE"
-      set_window_metadata "$chat_window_id" "$PROVIDER" "$CHAT_ID" "$ACTION" "$PROJECT_PATH"
       tmux select-window -t "$chat_window_id"
       return
     fi
