@@ -259,4 +259,59 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   assert.equal(await ui.showPermissionPicker(), false, "nothing to pick");
 }
 
+// --- cycleMode (Tab / Shift+Tab) ------------------------------------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  const applied = [];
+  Object.assign(ui, {
+    currentChat: {
+      mode: "plan",
+      modes: { availableModes: [{ id: "plan" }, { id: "default" }, { id: "acceptEdits" }] },
+    },
+    notify: () => {},
+    applyMode: async (id) => {
+      applied.push(id);
+      ui.currentChat = { ...ui.currentChat, mode: id };
+    },
+  });
+
+  await ui.cycleMode(1);
+  assert.equal(applied.at(-1), "default", "Tab moves to the next mode");
+  await ui.cycleMode(1);
+  assert.equal(applied.at(-1), "acceptEdits");
+  await ui.cycleMode(1);
+  assert.equal(applied.at(-1), "plan", "Tab wraps past the end");
+  await ui.cycleMode(-1);
+  assert.equal(applied.at(-1), "acceptEdits", "Shift+Tab wraps backwards");
+}
+{
+  // Match the current mode by any alias, not just id.
+  const ui = Object.create(PopupUi.prototype);
+  const applied = [];
+  Object.assign(ui, {
+    currentChat: {
+      mode: "Plan Mode",
+      modes: { availableModes: [{ id: "plan", label: "Plan Mode" }, { id: "build", label: "Build" }] },
+    },
+    notify: () => {},
+    applyMode: async (id) => applied.push(id),
+  });
+  await ui.cycleMode(1);
+  assert.equal(applied.at(-1), "build", "current matched by label alias, advances to build");
+}
+{
+  // A single mode (or none) never cycles.
+  const ui = Object.create(PopupUi.prototype);
+  let applied = false;
+  Object.assign(ui, {
+    currentChat: { mode: "default", modes: { availableModes: [{ id: "default" }] } },
+    notify: () => {},
+    applyMode: async () => {
+      applied = true;
+    },
+  });
+  await ui.cycleMode(1);
+  assert.equal(applied, false, "single mode does not cycle");
+}
+
 console.log("picker test passed");

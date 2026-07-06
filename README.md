@@ -372,7 +372,11 @@ autocomplete dropdown below the composer (it temporarily replaces the footer):
 `Ctrl+N`/`Ctrl+P` (or `↑`/`↓`) travel the candidates, `Tab`, `Enter`, or `→`
 accepts the highlighted one (`Enter` still submits when the typed command is
 already exact), and `Esc` dismisses it until the input changes. On the flat
-fallback layout, Tab keeps the classic unique-match completion. Input history
+fallback layout, Tab keeps the classic unique-match completion. On an **empty**
+composer, `Tab`/`Shift+Tab` cycle the adapter's session modes (e.g. Claude
+`plan → default → acceptEdits`) — the hint shows the current mode and the footer
+access label follows it; this is the quick equivalent of the `/modes` picker.
+Input history
 is persisted locally for future popups. Drafts are persisted per chat while
 editing and restored when the popup is reopened; a submitted prompt clears its
 draft. Double `Esc` clears the current input and stores it in the local kill
