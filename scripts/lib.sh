@@ -339,6 +339,16 @@ set_workspace_metadata() {
   tmux set-option -t "$session" -q @vanzi_hub_parent_client "$parent_client"
   tmux set-option -t "$session" -q @vanzi_hub_parent_pane "$parent_pane"
 
+  apply_acp_status_format "$session"
+}
+
+# The ACP window-status-format is a session option, and something in the tmux
+# session lifecycle (client attach/switch races during a fresh popup + daemon
+# boot) intermittently reverts it to the theme default, so a chat tab shows the
+# raw canonical window name instead of its title. Split out so the daemon/UI
+# can re-assert it on every metadata sync and self-heal that transient.
+apply_acp_status_format() {
+  session="$1"
   # Inside the ACP workspace, show minimal chat labels in the status bar:
   # provider icon (accent-colored), renameable title, and a status glyph only
   # when the chat needs attention (busy/permission/auth/error) — idle is quiet.
