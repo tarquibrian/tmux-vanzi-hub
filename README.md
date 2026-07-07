@@ -105,12 +105,15 @@ wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
   filter fzf-style, `↑`/`↓` (or `Ctrl+N`/`Ctrl+P`) move, `Enter` opens the
   chat or creates one from a `New … chat` row, `Tab` toggles project/all
   scope, `Ctrl+R` re-imports provider sessions, `Ctrl+E` renames the
-  highlighted chat inline, `Ctrl+D` pressed twice deletes it permanently
-  (the list refreshes in place), `Esc` clears the filter and then minimizes
-  the popup — the menu stays alive so the next `prefix+M` reattaches
-  instantly. The list refreshes live while chats change state. When the
-  popup is at least 96 columns wide, a preview pane on the right shows the
-  transcript tail of the highlighted chat — live and saved chats alike.
+  highlighted chat inline, `Ctrl+S` sends a one-line reply straight to a
+  live chat without leaving the list (an idle chat starts a turn, a busy one
+  queues it; the preview refreshes to show it), `Ctrl+D` pressed twice
+  deletes it permanently (the list refreshes in place), `Esc` clears the
+  filter and then minimizes the popup — the menu stays alive so the next
+  `prefix+M` reattaches instantly. The list refreshes live while chats change
+  state. When the popup is at least 96 columns wide, a preview pane on the
+  right shows the transcript tail of the highlighted chat — live and saved
+  chats alike.
   Chats needing attention (permission/auth/error) sort to the top of every
   list. Chats are saved automatically (every event persists to the
   registry), so saved is the default state: lists show a status only for

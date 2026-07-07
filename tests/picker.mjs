@@ -314,4 +314,57 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   assert.equal(applied, false, "single mode does not cycle");
 }
 
+// --- replyToChatFromPicker -------------------------------------------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  const calls = [];
+  Object.assign(ui, {
+    notify: (m) => calls.push({ notify: m }),
+    hub: { call: async (method, params) => { calls.push({ method, params }); } },
+  });
+
+  await ui.replyToChatFromPicker({ value: { chatId: "codex-1" } }, "hello there");
+  assert.deepEqual(
+    calls[0],
+    { method: "send_prompt", params: { chatId: "codex-1", text: "hello there" } },
+    "reply sends the prompt to the chat",
+  );
+}
+{
+  // No chatId → nothing sent.
+  const ui = Object.create(PopupUi.prototype);
+  let sent = false;
+  Object.assign(ui, { notify: () => {}, hub: { call: async () => { sent = true; } } });
+  await ui.replyToChatFromPicker({ value: {} }, "x");
+  assert.equal(sent, false, "missing chatId sends nothing");
+}
+{
+  // A send failure surfaces via notify instead of throwing.
+  const ui = Object.create(PopupUi.prototype);
+  let notified = "";
+  Object.assign(ui, {
+    notify: (m) => { notified = m; },
+    hub: { call: async () => { throw new Error("adapter down"); } },
+  });
+  await ui.replyToChatFromPicker({ value: { chatId: "c" } }, "hi");
+  assert.match(notified, /reply failed.*adapter down/, "failure is reported, not thrown");
+}
+{
+  // canReply gates on chat.active in the chats picker items.
+  const ui = Object.create(PopupUi.prototype);
+  Object.assign(ui, {
+    cwd: "/repo",
+    currentChat: { id: "other" },
+    hub: { call: async () => ({ chats: [
+      { id: "live", provider: "codex", projectName: "repo", cwd: "/repo", active: true, status: "idle" },
+      { id: "saved", provider: "codex", projectName: "repo", cwd: "/repo", active: false },
+    ] }) },
+    orderChatsForDisplay: (chats) => chats,
+  });
+  const items = await ui.buildChatsPickerItems();
+  const rows = items.filter((i) => !i.disabled);
+  assert.equal(rows.find((r) => r.value.chatId === "live").canReply, true, "live chat can be replied to");
+  assert.equal(rows.find((r) => r.value.chatId === "saved").canReply, false, "saved chat cannot");
+}
+
 console.log("picker test passed");
