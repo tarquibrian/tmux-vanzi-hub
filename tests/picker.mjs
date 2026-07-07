@@ -367,4 +367,43 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   assert.equal(rows.find((r) => r.value.chatId === "saved").canReply, false, "saved chat cannot");
 }
 
+// --- showMenuOverlay routing -----------------------------------------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  const switches = [];
+  Object.assign(ui, {
+    cwd: "/repo",
+    currentChat: { id: "chat-here" },
+    pickerSupported: () => true,
+    canPaintPinned: () => true,
+    switchToChatWindow: (arg) => switches.push(arg),
+  });
+
+  ui.runMenuPicker = async () => ({ type: "chat", chatId: "chat-3", cwd: "/repo", provider: "codex" });
+  await ui.showMenuOverlay();
+  assert.deepEqual(
+    switches.at(-1),
+    { type: "chat", chatId: "chat-3", cwd: "/repo", provider: "codex" },
+    "picking another chat focuses/creates its window",
+  );
+
+  switches.length = 0;
+  ui.runMenuPicker = async () => ({ type: "chat", chatId: "chat-here" });
+  await ui.showMenuOverlay();
+  assert.equal(switches.length, 0, "picking the current chat switches nothing");
+
+  ui.runMenuPicker = async () => ({ type: "new", provider: "claude" });
+  await ui.showMenuOverlay();
+  assert.deepEqual(switches.at(-1), { cwd: "/repo", provider: "claude", action: "new" }, "new chat");
+
+  ui.runMenuPicker = async () => ({ type: "provider", provider: "codex" });
+  await ui.showMenuOverlay();
+  assert.deepEqual(switches.at(-1), { cwd: "/repo", provider: "codex", action: "open" }, "open provider");
+
+  switches.length = 0;
+  ui.runMenuPicker = async () => null;
+  assert.equal(await ui.showMenuOverlay(), true, "Esc is still handled");
+  assert.equal(switches.length, 0, "Esc switches nothing");
+}
+
 console.log("picker test passed");

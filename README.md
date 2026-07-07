@@ -379,7 +379,9 @@ fallback layout, Tab keeps the classic unique-match completion. On an **empty**
 composer, `Tab`/`Shift+Tab` cycle the adapter's session modes (e.g. Claude
 `plan → default → acceptEdits`) — the hint shows the current mode and the footer
 access label follows it; this is the quick equivalent of the `/modes` picker.
-Input history
+`←` on an empty composer backs out to the full menu **in the same pane** (the
+agent-view "detach" gesture): pick a chat to focus its window (or create one),
+or press `Esc` to return to the chat. Input history
 is persisted locally for future popups. Drafts are persisted per chat while
 editing and restored when the popup is reopened; a submitted prompt clears its
 draft. Double `Esc` clears the current input and stores it in the local kill
