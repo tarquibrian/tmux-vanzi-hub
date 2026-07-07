@@ -516,9 +516,8 @@ async function runTmuxAction(args) {
 
       case "delete": {
         // The tmux menu already confirmed, so delete directly and send the popup
-        // back to its menu instead of re-prompting through /delete. keepPane
-        // stops the daemon from killing the window the menu returns to.
-        const result = await hub.call("delete_chat", { chatId, keepPane: context.pane || "" });
+        // back to its menu instead of re-prompting through /delete.
+        const result = await hub.call("delete_chat", { chatId });
         if (context.pane) submitCommandToTmuxPane(context.pane, "/menu");
         tmuxDisplayMessage(
           context,
