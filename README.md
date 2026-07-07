@@ -111,9 +111,11 @@ wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
   highlighted chat inline, `Ctrl+S` sends a one-line reply straight to a
   live chat without leaving the list (an idle chat starts a turn, a busy one
   queues it; the preview refreshes to show it), `Ctrl+D` pressed twice
-  deletes it permanently (the list refreshes in place), `Esc` clears the
-  filter and then minimizes the popup — the menu stays alive so the next
-  `prefix+M` reattaches instantly. The list refreshes live while chats change
+  deletes it permanently and closes its tab if open. Picking a chat focuses
+  its window (or creates one); picking one that isn't open from a cold-start
+  menu loads it into that pane. `Esc` clears the filter, then closes the
+  overlay — back to the chat you were in, or minimizes the popup from a
+  cold-start menu. The list refreshes live while chats change
   state. When the popup is at least 96 columns wide, a preview pane on the
   right shows the transcript tail of the highlighted chat — live and saved
   chats alike.
