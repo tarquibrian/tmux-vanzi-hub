@@ -406,4 +406,17 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   assert.equal(switches.length, 0, "Esc switches nothing");
 }
 
+// --- adoptChatInPane passthrough -------------------------------------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  delete process.env.TMUX_PANE; // no pane → skips the tmux option write
+  let called = false;
+  const result = await ui.adoptChatInPane(async () => {
+    called = true;
+    return "chat-loop-result";
+  });
+  assert.equal(called, true, "adoptChatInPane runs the open function");
+  assert.equal(result, "chat-loop-result", "and returns its result (the chat loop)");
+}
+
 console.log("picker test passed");
