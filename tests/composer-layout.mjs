@@ -47,13 +47,15 @@ const session = (line = "") => ({ pinned: true, line, cursor: line.length });
   const ui = makeUi();
   const layout = ui.rawInputLayout(session(""));
   assert.equal(layout.boxed, true, "boxed on 30 rows");
-  // gap + top rule + 1 input row + bottom rule + footer = 5 composer rows
-  assert.equal(layout.outputBottom, 30 - 5);
-  assert.equal(layout.gapRow, 25, "blank gap row between transcript and box");
-  assert.equal(layout.dividerRow, 26, "top rule row");
-  assert.equal(layout.inputRow, 27);
-  assert.equal(layout.boxBottomRow, 28, "bottom rule wraps the input");
-  assert.equal(layout.footerRow, 29);
+  // gap + top rule + input + bottom rule + footer + hint = 6 composer rows.
+  // The hint row is always reserved inside a chat so typing never slides it.
+  assert.equal(layout.outputBottom, 30 - 6);
+  assert.equal(layout.gapRow, 24, "blank gap row between transcript and box");
+  assert.equal(layout.dividerRow, 25, "top rule row");
+  assert.equal(layout.inputRow, 26);
+  assert.equal(layout.boxBottomRow, 27, "bottom rule wraps the input");
+  assert.equal(layout.footerRow, 28);
+  assert.equal(layout.hintRow, 29, "hint row is always reserved");
   assert.ok(layout.composerRows.includes(layout.boxBottomRow), "bottom rule cleared on layout change");
   assert.ok(layout.composerRows.includes(layout.gapRow), "gap row cleared on layout change");
   const flatWidth = ui.rawInputTextWidth(session(""), 100, false);
