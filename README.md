@@ -194,7 +194,8 @@ and tmux menus follow the same order.
 
 ## Popup Commands
 
-- `/menu`: return to the agent/chat menu.
+- `/menu`: open the agent/chat menu overlay in this pane (same as `←` on an
+  empty composer or `Ctrl+O`).
 - `/control`, `/cmd`, or `/panel`: open the tmux Command Center for the
   active chat.
 - `/chats`: interactive chat switcher over the transcript area (type to

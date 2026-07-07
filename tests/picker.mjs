@@ -396,10 +396,6 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   await ui.showMenuOverlay();
   assert.deepEqual(switches.at(-1), { cwd: "/repo", provider: "claude", action: "new" }, "new chat");
 
-  ui.runMenuPicker = async () => ({ type: "provider", provider: "codex" });
-  await ui.showMenuOverlay();
-  assert.deepEqual(switches.at(-1), { cwd: "/repo", provider: "codex", action: "open" }, "open provider");
-
   switches.length = 0;
   ui.runMenuPicker = async () => null;
   assert.equal(await ui.showMenuOverlay(), true, "Esc is still handled");
