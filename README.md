@@ -101,7 +101,10 @@ wipe the state dir entirely: `rm -rf ~/.cache/tmux-vanzi-hub`.
   menu (new chat here per provider, or jump to a chat open in another project);
   when no chats exist anywhere it just creates one with the default provider.
 - `prefix+y`: open the native tmux ACP menu for the current project.
-- `prefix+M`: toggle the full popup ACP menu — an interactive list: type to
+- `prefix+M`: open the full ACP menu. Inside a chat it opens **in the same
+  pane** as an overlay (equivalent to `Ctrl+O` in the composer, or `←` on an
+  empty one; your draft is kept and restored on `Esc`); from a normal pane it
+  opens the popup. An interactive list: type to
   filter fzf-style, `↑`/`↓` (or `Ctrl+N`/`Ctrl+P`) move, `Enter` opens the
   chat or creates one from a `New … chat` row, `Tab` toggles project/all
   scope, `Ctrl+R` re-imports provider sessions, `Ctrl+E` renames the

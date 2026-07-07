@@ -15,13 +15,20 @@ ACTION="${7:-open}"
 
 [ -n "$CURRENT_PATH" ] || CURRENT_PATH="$HOME"
 
-# prefix+M while already on the ephemeral menu window toggles it off: send the
-# menu process an Escape so it backs out (reveals the recent chat or minimizes)
-# and exits, closing its own window — instead of stacking another menu.
+# prefix+M behaviour depends on the focused pane:
+# - already on the ephemeral menu-host window → Escape toggles it off;
+# - focused in a chat pane → open the menu overlay in-process (Ctrl+O), so the
+#   menu shows in this same pane instead of a separate window;
+# - anywhere else (a normal pane) → fall through to the cold-start flow below.
 if [ "$ACTION" = "menu" ] && [ -n "$TARGET_PANE" ]; then
   current_action="$(tmux display-message -p -t "$TARGET_PANE" "#{@vanzi_hub_action}" 2>/dev/null || true)"
+  current_chat="$(tmux display-message -p -t "$TARGET_PANE" "#{@vanzi_hub_chat_id}" 2>/dev/null || true)"
   if [ "$current_action" = "menu" ]; then
     tmux send-keys -t "$TARGET_PANE" Escape
+    exit 0
+  fi
+  if [ -n "$current_chat" ]; then
+    tmux send-keys -t "$TARGET_PANE" C-o
     exit 0
   fi
 fi
