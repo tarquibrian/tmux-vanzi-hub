@@ -12,6 +12,9 @@ and every list shows live status with a transcript preview.
   required).
 - **Zero dependencies** — pure Node + tmux; adapters are fetched on demand.
 
+![Vanzi Hub popup over Neovim: a Claude chat rendering a Markdown table, the
+half-box composer, and the tab bar showing a Codex and a Claude chat.](assets/screenshot.png)
+
 ## Contents
 
 - [Requirements](#requirements)
