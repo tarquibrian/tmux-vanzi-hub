@@ -180,6 +180,7 @@ menu / interactive picker equivalent under `prefix + y`.
 | `/commands` | Show provider commands reported through ACP. |
 | `/plan` | Show the current execution plan with per-step status. |
 | `/roots`, `/roots add\|remove\|clear <path>` | Show / edit extra workspace directories (applied on reopen). |
+| `/changes` (`/diff`) | Picker of the files edited in this chat (path + `+/-` counts); Enter expands the chosen file's git-style diff into the transcript. |
 
 `/model`, `/effort`, `/modes`, and `/access` open focused pickers over the
 transcript with the current value marked `●` (tmux menus / text as fallback;

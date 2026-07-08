@@ -351,6 +351,14 @@ try {
     "diff hunks include the added line",
   );
 
+  // list_changes aggregates the edited files (latest diff per path) that back
+  // the /changes picker.
+  const changes = await hub.call("list_changes", { chatId: chat.id });
+  const sampleChange = changes.files.find((file) => file.path === "sample.js");
+  assert.ok(sampleChange, "list_changes lists the edited file");
+  assert.ok(sampleChange.hunks.length > 0, "the change carries diff hunks");
+  await assert.rejects(hub.call("list_changes", { chatId: "nope" }), /Unknown chat/);
+
   // promptQueueing drain: a prompt queued during an active turn is dispatched
   // once that turn finishes.
   const drainMark = events.length;

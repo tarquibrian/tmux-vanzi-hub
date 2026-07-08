@@ -612,6 +612,7 @@ function buildCommandCenterPanelItems(chat, context, cwd) {
     { separator: true },
     { label: "Compose multiline prompt", key: "p", command: tmuxSubmitToPane(context.pane, "/compose") },
     { label: "Open editor prompt", key: "e", command: tmuxSubmitToPane(context.pane, "/edit") },
+    { label: "File changes (diffs)", key: "D", command: tmuxSubmitToPane(context.pane, "/changes") },
     { label: "Attach file to next prompt", key: "t", command: tmuxSubmitToPane(context.pane, "/attach") },
     { label: "Rename chat", key: "R", command: tmuxSubmitToPane(context.pane, "/rename") },
     { label: "Activity display", key: "v", command: tmuxPanelCommand(cwd, context, "activity", chat.id) },

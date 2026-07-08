@@ -479,4 +479,54 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   assert.equal(shown, false, "picker not shown");
 }
 
+// --- showChangesPicker expands the picked file's diff ---------------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  const printed = [];
+  const files = [
+    { path: "a.js", added: 2, removed: 1, hunks: [{ rows: [{ sign: "+", text: "x" }] }] },
+    { path: "b.js", added: 0, removed: 3, hunks: [{ rows: [{ sign: "-", text: "y" }] }] },
+  ];
+  Object.assign(ui, {
+    currentChat: { id: "c1", title: "t" },
+    hub: {
+      call: async (method, params) => {
+        assert.equal(method, "list_changes");
+        assert.equal(params.chatId, "c1");
+        return { files };
+      },
+    },
+    pickerSupported: () => true,
+    canPaintPinned: () => true,
+    interactivePick: async (config) => {
+      assert.equal(config.items.length, 3, "all-files entry + one per file");
+      return "b.js";
+    },
+    closeActivityBlock: () => {},
+    logLine: () => {},
+    renderDiff: (diff) => printed.push(diff.path),
+    notify: () => {},
+  });
+
+  await ui.showChangesPicker();
+  assert.deepEqual(printed, ["b.js"], "expands only the picked file's diff");
+}
+{
+  // No edits yet → notify, never open the picker.
+  const ui = Object.create(PopupUi.prototype);
+  let notified = "";
+  Object.assign(ui, {
+    currentChat: { id: "c1" },
+    hub: { call: async () => ({ files: [] }) },
+    notify: (message) => {
+      notified = message;
+    },
+    interactivePick: async () => {
+      throw new Error("picker should not open with no changes");
+    },
+  });
+  await ui.showChangesPicker();
+  assert.match(notified, /no file changes/);
+}
+
 console.log("picker test passed");
