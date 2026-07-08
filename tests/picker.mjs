@@ -415,4 +415,68 @@ assert.equal(pickerNextIndex(entries, 1, 10), 5, "large jumps clamp at the last 
   assert.equal(result, "chat-loop-result", "and returns its result (the chat loop)");
 }
 
+// --- answerPermission maps a bare option number to its optionId ------------------
+{
+  const ui = Object.create(PopupUi.prototype);
+  const calls = [];
+  Object.assign(ui, {
+    pendingPermission: {
+      permissionId: "perm-1",
+      options: [
+        { optionId: "opt-allow", kind: "allow_once", name: "allow once" },
+        { optionId: "opt-always", kind: "allow_always", name: "always allow" },
+        { optionId: "opt-reject", kind: "reject_once", name: "reject" },
+      ],
+    },
+    hub: { call: async (method, params) => calls.push({ method, params }) },
+  });
+
+  await ui.answerPermission("/allow 2", "allow");
+  assert.deepEqual(
+    calls[0],
+    { method: "permission_response", params: { permissionId: "perm-1", optionId: "opt-always" } },
+    "a bare option number answers the matching option",
+  );
+  assert.equal(ui.pendingPermission, null, "the request is cleared after answering");
+}
+
+// --- maybeAutoOpenPermission opens once per request, then defers to the composer -
+{
+  const ui = Object.create(PopupUi.prototype);
+  let shown = 0;
+  Object.assign(ui, {
+    pendingPermission: { permissionId: "perm-9", options: [{ optionId: "a" }] },
+    autoShownPermissionId: null,
+    pickerSupported: () => true,
+    canPaintPinned: () => true,
+    showPermissionPicker: async () => {
+      shown += 1;
+      return true;
+    },
+  });
+
+  assert.equal(await ui.maybeAutoOpenPermission(), true, "opens for a new request");
+  assert.equal(ui.autoShownPermissionId, "perm-9", "records the shown request id");
+  assert.equal(await ui.maybeAutoOpenPermission(), false, "does not reopen the same request");
+  assert.equal(shown, 1, "picker shown exactly once");
+}
+{
+  // No pinned picker (e.g. text-menu fallback): never auto-open — the banner and
+  // bare-number answering take over instead.
+  const ui = Object.create(PopupUi.prototype);
+  let shown = false;
+  Object.assign(ui, {
+    pendingPermission: { permissionId: "p", options: [{ optionId: "a" }] },
+    autoShownPermissionId: null,
+    pickerSupported: () => false,
+    canPaintPinned: () => true,
+    showPermissionPicker: async () => {
+      shown = true;
+      return true;
+    },
+  });
+  assert.equal(await ui.maybeAutoOpenPermission(), false, "no picker support → no auto-open");
+  assert.equal(shown, false, "picker not shown");
+}
+
 console.log("picker test passed");
