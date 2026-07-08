@@ -117,6 +117,13 @@ All bindings are under your tmux `prefix`.
 | `prefix + ,` | Inside a chat: rename the **chat** (title + status-bar label). Outside: normal tmux window rename. |
 | `prefix + x` / `prefix + &` | Inside a chat: a close menu (close window / stop chat / delete / kill-pane). Outside: normal tmux kill confirmations. |
 
+Inside a `vz-*` workspace, `prefix + s` opens a tree-style selector of every ACP
+chat across projects, with aligned columns (icon, title, status, last activity,
+mode, model) and a live preview:
+
+![The prefix+s tree selector listing chats across projects with status, time,
+mode and model columns.](assets/switcher.png)
+
 ### The `prefix + M` menu
 
 An interactive list of every chat, with New-chat rows per provider:
@@ -132,6 +139,10 @@ An interactive list of every chat, with New-chat rows per provider:
 | `Ctrl+D` (twice) | delete permanently; closes its tab if open |
 | `Ctrl+R` | re-import provider sessions |
 | `Esc` | clear the filter, then close the overlay (back to your chat, or minimize) |
+
+![The menu overlay: a filterable chat list on the left with per-chat status,
+age, mode and model, and a live transcript preview of the highlighted chat on
+the right.](assets/menu.png)
 
 Picking a chat focuses its window (or creates one); from a cold-start menu it
 loads the chat into that pane. When the popup is ≥ 96 columns wide, a preview
