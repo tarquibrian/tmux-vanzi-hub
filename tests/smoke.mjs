@@ -333,6 +333,24 @@ try {
   assert.equal(planChat.plan.entries[1].status, "in_progress");
   assert.equal(planChat.plan.entries[2].status, "pending");
 
+  // tool-call diffs: a file edit surfaces a structured git-style diff (path,
+  // +/- counts, hunk rows) so the UI renders it instead of "diff <path>".
+  const diffMark = events.length;
+  await hub.call("send_prompt", { chatId: chat.id, text: "show me a diff" });
+  await waitFor(() =>
+    events.slice(diffMark).some((event) => event.type === "chat_event" && event.event?.diffs?.length),
+  );
+  const diffEvent = events
+    .slice(diffMark)
+    .find((event) => event.type === "chat_event" && event.event?.diffs?.length);
+  const diff = diffEvent.event.diffs[0];
+  assert.equal(diff.path, "sample.js", "diff carries the file path");
+  assert.ok(diff.added >= 1 && diff.removed >= 1, "diff counts additions and deletions");
+  assert.ok(
+    diff.hunks[0].rows.some((row) => row.sign === "+" && row.text.includes("const c")),
+    "diff hunks include the added line",
+  );
+
   // promptQueueing drain: a prompt queued during an active turn is dispatched
   // once that turn finishes.
   const drainMark = events.length;

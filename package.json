@@ -30,6 +30,6 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node tests/picker.mjs && node tests/composer-layout.mjs && node tests/autocomplete.mjs && node tests/highlight.mjs && node tests/render-width.mjs && node tests/render-stream.mjs && node tests/render-live-table.mjs && node tests/rpc.mjs && node tests/smoke.mjs"
+    "test": "node tests/picker.mjs && node tests/composer-layout.mjs && node tests/autocomplete.mjs && node tests/highlight.mjs && node tests/render-width.mjs && node tests/render-stream.mjs && node tests/render-live-table.mjs && node tests/rpc.mjs && node tests/diff.mjs && node tests/smoke.mjs"
   }
 }

@@ -333,12 +333,14 @@ emoji stay aligned). It is not a full CommonMark parser; unsupported Markdown
 falls back to readable plain text.
 
 Tool lifecycle events use `compact` rendering by default: completed read/search
-tools group as `Explored`, edit/write as `Edited`, command-like as `Ran`.
-`/activity hidden` gives a conversation-only transcript; `/activity debug` or
-`/debug` renders the full ACP/tool event stream. Reasoning/thought chunks are
-hidden in normal mode. ACP `plan` updates render a `Plan (done/total)` block
-with per-step markers (`x` done, `>` in progress, `-` pending) and skip
-identical repeats.
+tools group as `Explored`, edit/write as `Edited`, command-like as `Ran`. File
+edits render as a git-style diff — a `path (+added -removed)` header followed by
+green additions, red deletions, and dim context, split into hunks (`⋮` marks
+skipped lines). `/activity hidden` gives a conversation-only transcript;
+`/activity debug` or `/debug` renders the full ACP/tool event stream.
+Reasoning/thought chunks are hidden in normal mode. ACP `plan` updates render a
+`Plan (done/total)` block with per-step markers (`x` done, `>` in progress, `-`
+pending) and skip identical repeats.
 
 ## Configuration
 

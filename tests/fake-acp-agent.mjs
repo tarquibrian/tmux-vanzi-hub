@@ -265,6 +265,37 @@ async function handleMessage(message) {
       return;
     }
 
+    if (/diff/i.test(promptText)) {
+      notify("session/update", {
+        sessionId: currentSessionId || "fake-session",
+        update: {
+          sessionUpdate: "tool_call",
+          toolCallId: "fake-edit",
+          title: "Edit sample.js",
+          kind: "edit",
+          status: "in_progress",
+        },
+      });
+      notify("session/update", {
+        sessionId: currentSessionId || "fake-session",
+        update: {
+          sessionUpdate: "tool_call_update",
+          toolCallId: "fake-edit",
+          status: "completed",
+          content: [
+            {
+              type: "diff",
+              path: "sample.js",
+              oldText: "const a = 1;\nconst b = 2;\nconsole.log(a + b);\n",
+              newText: "const a = 1;\nconst b = 20;\nconst c = 3;\nconsole.log(a + b + c);\n",
+            },
+          ],
+        },
+      });
+      respond(message.id, { stopReason: "end_turn" });
+      return;
+    }
+
     const permission = await request("session/request_permission", {
       sessionId: currentSessionId || "fake-session",
       toolCall: {
