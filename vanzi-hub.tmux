@@ -54,11 +54,12 @@ WORKSPACE_SESSION="$(tmux show-option -gqv @vanzi_hub_workspace_session)"
 ACP_MATCH="#{||:#{m/r:^${SESSION_PREFIX}-,#{session_name}},#{==:#{session_name},$WORKSPACE_SESSION}}"
 
 # Inside ACP workspaces prefix+, renames the CHAT (daemon title + status-bar
-# label); window names stay canonical since they carry chat identity. Outside
-# it is the normal tmux window rename.
+# label); window names stay canonical since they carry chat identity. It routes
+# to the composer's in-process rename prompt (Ctrl+T) so the title never passes
+# through a shell/tmux command string. Outside it is the normal window rename.
 tmux unbind-key -q ,
 tmux bind-key , if-shell -F "$ACP_MATCH" \
-  "command-prompt -I \"#{@vanzi_hub_title}\" -p \"Rename chat:\" \"run-shell 'sh $CURRENT_DIR/scripts/rename-chat.sh #{pane_id} \\\"%%\\\"'\"" \
+  "send-keys -t '#{pane_id}' C-t" \
   "command-prompt -I \"#{window_name}\" \"rename-window -- '%%'\""
 
 # Inside ACP workspaces prefix+x / prefix+& open a close menu that states what

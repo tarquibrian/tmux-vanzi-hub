@@ -268,19 +268,12 @@ try {
   const actionRootsAdd = await hub.call("subscribe", { chatId: chat.id });
   assert.deepEqual(actionRootsAdd.chat.additionalDirectories, [extraPath]);
 
-  runHubCli([
-    "tmux-action",
-    "--cwd",
-    projectPath,
-    "--action",
-    "rename",
-    "--chat-id",
-    chat.id,
-    "--value",
-    "Action fake chat",
-  ]);
+  // Rename now runs through the composer's in-process prompt (no CLI/shell
+  // action), so a title with quotes can never break a command. Exercise the
+  // daemon RPC the composer calls, including such a title.
+  await hub.call("rename_chat", { chatId: chat.id, title: `Bob's "fake" chat` });
   const actionRename = await hub.call("subscribe", { chatId: chat.id });
-  assert.equal(actionRename.chat.title, "Action fake chat");
+  assert.equal(actionRename.chat.title, `Bob's "fake" chat`);
 
   await hub.call("send_prompt", { chatId: chat.id, text: "trigger permission" });
   await waitFor(() => events.some((event) => event.event === "permission_request"));

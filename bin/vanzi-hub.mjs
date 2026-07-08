@@ -64,7 +64,6 @@ import {
   actionPayload,
   parseActionPayload,
   tmuxActionCommand,
-  tmuxPromptActionCommand,
   tmuxConfirmActionCommand,
   tmuxRunWorkspace,
   HUB_DIR,
@@ -452,14 +451,6 @@ async function runTmuxAction(args) {
         break;
       }
 
-      case "rename": {
-        if (!value) throw new Error("Title is empty");
-        const chat = await hub.call("rename_chat", { chatId, title: value });
-        syncTmuxChatMetadata(context, chat);
-        tmuxDisplayMessage(context, `vanzi-hub: renamed to ${cleanInline(value)}`);
-        break;
-      }
-
       case "roots-add":
       case "roots-remove":
       case "roots-clear": {
@@ -623,7 +614,7 @@ function buildCommandCenterPanelItems(chat, context, cwd) {
     { label: "Compose multiline prompt", key: "p", command: tmuxSubmitToPane(context.pane, "/compose") },
     { label: "Open editor prompt", key: "e", command: tmuxSubmitToPane(context.pane, "/edit") },
     { label: "Attach file to next prompt", key: "t", command: tmuxPromptSubmitToPane(context, "Attach file", "/attach ") },
-    { label: "Rename chat", key: "r", command: tmuxPromptActionCommand(cwd, context, "rename", chat.id, "Rename chat", chat.title || "") },
+    { label: "Rename chat", key: "R", command: tmuxSubmitToPane(context.pane, "/rename") },
     { label: "Activity display", key: "v", command: tmuxPanelCommand(cwd, context, "activity", chat.id) },
     { separator: true },
     { label: "Cancel current turn", key: "x", command: tmuxConfirmActionCommand(cwd, context, "cancel", chat.id, "Cancel current ACP turn?") },

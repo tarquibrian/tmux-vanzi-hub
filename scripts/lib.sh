@@ -96,6 +96,13 @@ window_exists() {
   tmux list-windows -t "$1" -F "#{window_name}" 2>/dev/null | grep -Fxq "$2"
 }
 
+# Window id for a window matched by exact name in a session. Used to reuse the
+# singleton "menu" window; chat windows are matched by @vanzi_hub_chat_id.
+window_id_for() {
+  tmux list-windows -t "$1" -F "#{window_id} #{window_name}" 2>/dev/null |
+    awk -v name="$2" '$2 == name { print $1; exit }'
+}
+
 window_is_dead() {
   [ "$(tmux display-message -p -t "$1" "#{pane_dead}" 2>/dev/null || true)" = "1" ]
 }
