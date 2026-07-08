@@ -1,0 +1,11 @@
+# Dependencies (the plugin is dependency-free; this guards `npm install`)
+node_modules/
+
+# macOS
+.DS_Store
+
+# Editor / local
+*.swp
+*.log
+
+# Runtime state lives in ~/.cache/tmux-vanzi-hub, never in the repo

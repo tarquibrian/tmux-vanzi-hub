@@ -6,9 +6,23 @@
   "bin": {
     "vanzi-hub": "bin/vanzi-hub.mjs"
   },
+  "keywords": [
+    "tmux",
+    "tmux-plugin",
+    "acp",
+    "agent-client-protocol",
+    "claude-code",
+    "codex",
+    "ai",
+    "tui"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tarquibrian/tmux-vanzi-hub"
+    "url": "git+https://github.com/tarquibrian/tmux-vanzi-hub.git"
+  },
+  "homepage": "https://github.com/tarquibrian/tmux-vanzi-hub#readme",
+  "bugs": {
+    "url": "https://github.com/tarquibrian/tmux-vanzi-hub/issues"
   },
   "author": "Brian Tarqui",
   "license": "MIT",
