@@ -1,4 +1,23 @@
-# tmux-vanzi-hub
+# tmux-vanzi-hub → moved to [tmux-acp-hub](https://github.com/tarquibrian/tmux-acp-hub)
+
+> **This repository has moved and is no longer maintained here.**
+>
+> It was renamed to **[tmux-acp-hub](https://github.com/tarquibrian/tmux-acp-hub)**
+> so it reads as the sibling of [tmux-cli-hub](https://github.com/tarquibrian/tmux-cli-hub) —
+> two hubs for tmux agents, one over the Agent Client Protocol, one over each
+> agent's raw CLI.
+>
+> **Update your config:**
+>
+> ```tmux
+> set -g @plugin 'tarquibrian/tmux-acp-hub'
+> ```
+>
+> The tmux options moved from `@vanzi_hub_*` to `@acp_hub_*` and env vars from
+> `VANZI_HUB_*` to `ACP_HUB_*`. On first run the plugin migrates your existing
+> `~/.cache/tmux-vanzi-hub` state (saved chats, drafts, history) automatically.
+
+---
 
 Vanzi Hub — a persistent multi-agent hub for tmux. Run Codex, Claude Code, and
 any [Agent Client Protocol](https://agentclientprotocol.com) agent in tmux
